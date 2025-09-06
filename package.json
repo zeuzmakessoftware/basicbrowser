@@ -1,16 +1,44 @@
 {
   "name": "basicbrowser",
   "version": "1.0.0",
-  "description": "",
+  "description": "A basic browser built with Electron",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "dist": "electron-builder --publish=never"
   },
-  "keywords": [],
+  "keywords": ["browser", "electron"],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "electron": "^38.0.0"
+  "build": {
+    "appId": "com.example.basicbrowser",
+    "productName": "Basic Browser",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "!dist/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "devDependencies": {
+    "electron": "^38.0.0",
+    "electron-builder": "^26.0.12"
   }
 }
