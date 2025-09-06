@@ -10,7 +10,7 @@
                  frame-src *;
                  connect-src *;">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mini Browser</title>
+  <title>Basic Browser</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -24,18 +24,14 @@
     }
   </script>
   <style>
-    /* Make the custom titlebar draggable */
     .app-drag { -webkit-app-region: drag; }
-    /* Buttons/inputs must be non-draggable so clicks work */
     .no-drag { -webkit-app-region: no-drag; }
   </style>
 </head>
 <body class="h-screen w-screen m-0 bg-neutral-950/90 text-neutral-100 flex flex-col">
-  <!-- Glassy custom titlebar -->
   <div id="titlebar"
        class="app-drag sticky top-0 z-50 flex items-center justify-between
               px-3 py-2 bg-glass backdrop-blur-md shadow-glow border-b border-white/5">
-    <!-- Mac-style traffic lights (custom) -->
     <div class="flex items-center gap-2 pl-1">
       <button id="win-close"
               class="no-drag h-3.5 w-3.5 rounded-full"
@@ -49,34 +45,72 @@
       <div class="ml-3 text-sm font-medium text-neutral-200 select-none">Mini Browser</div>
     </div>
 
-    <!-- Command cluster -->
     <div class="no-drag flex items-center gap-2">
       <button id="back" class="px-3 py-1.5 rounded-lg bg-neutral-800/70 hover:bg-neutral-700/70">←</button>
       <button id="forward" class="px-3 py-1.5 rounded-lg bg-neutral-800/70 hover:bg-neutral-700/70">→</button>
       <button id="reload" class="px-3 py-1.5 rounded-lg bg-neutral-800/70 hover:bg-neutral-700/70">⟳</button>
       <input id="url"
-             class="w-[44vw] md:w-[52vw] lg:w-[58vw] px-3 py-1.5 rounded-lg bg-neutral-950/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+             class="w-[42vw] md:w-[50vw] lg:w-[56vw] px-3 py-1.5 rounded-lg bg-neutral-950/70 border border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
              type="text" spellcheck="false" placeholder="Search or enter address" />
+      
+      <div class="relative">
+        <button id="menuToggle" class="px-3 py-2 rounded-lg bg-neutral-800/70 hover:bg-neutral-700/70 border border-white/10 flex items-center gap-1" title="Browser Menu">
+          <span class="text-xs">▼</span>
+        </button>
+        
+        <div id="dropdownMenu" class="hidden absolute right-0 top-full mt-1 w-48 bg-neutral-900 border border-white/10 rounded-lg shadow-2xl backdrop-blur-md z-50">
+          <div class="py-1">
+            <button id="incognitoToggle" class="w-full px-4 py-2 text-left text-sm hover:bg-neutral-800/70 flex items-center gap-3">
+              <span id="incognitoText">Toggle Incognito Mode</span>
+            </button>
+            <button id="historyBtn" class="w-full px-4 py-2 text-left text-sm hover:bg-neutral-800/70 flex items-center gap-3">
+              <span>View History</span>
+            </button>
+            <hr class="border-white/10 my-1">
+            <button id="clearHistoryBtn" class="w-full px-4 py-2 text-left text-sm hover:bg-red-600/20 text-red-300 flex items-center gap-3">
+              <span>Clear History</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
       <button id="newTab" class="px-3 py-1.5 rounded-lg bg-black hover:bg-neutral-950 border-[1px] border-white/20">＋</button>
     </div>
   </div>
 
-  <!-- Tabs strip -->
   <div class="no-drag bg-neutral-900/60 border-b border-white/5">
     <div id="tabs" class="flex gap-2 px-2 py-2 overflow-x-auto"></div>
   </div>
-
-  <!-- Views area fills remaining space -->
   <div id="views" class="relative flex-1 bg-black"></div>
+
+  <div id="historyModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="bg-neutral-900 rounded-xl border border-white/10 shadow-2xl w-[90vw] max-w-2xl max-h-[80vh] flex flex-col">
+      <div class="flex items-center justify-between p-4 border-b border-white/10">
+        <h2 class="text-lg font-semibold text-white">Browsing History</h2>
+        <div class="flex gap-2">
+          <button id="clearHistoryBtn" class="px-3 py-1 text-sm bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg border border-red-500/30">Clear All</button>
+          <button id="closeHistoryBtn" class="px-3 py-1 text-sm bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg">Close</button>
+        </div>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto p-4">
+        <div id="historyList" class="space-y-2">
+        </div>
+        <div id="emptyHistory" class="hidden text-center text-neutral-400 py-8">
+          <div class="text-4xl mb-2">📚</div>
+          <div>No browsing history yet</div>
+          <div class="text-sm mt-1">Visit some websites to see your history here</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="./renderer.js"></script>
   <script>
-    // Window control wiring
     const q = (s)=>document.querySelector(s);
     q('#win-close').addEventListener('click', ()=>window.appWindow.close());
     q('#win-min').addEventListener('click', ()=>window.appWindow.minimize());
     q('#win-max').addEventListener('click', ()=>window.appWindow.maximizeToggle());
-    // mac-like dblclick to zoom/unzoom
     document.getElementById('titlebar').addEventListener('dblclick', ()=>window.appWindow.maximizeToggle());
   </script>
 </body>
